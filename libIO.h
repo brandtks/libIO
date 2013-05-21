@@ -32,6 +32,8 @@ class libIO
 		void init(char inOut);
 		void setOutOn(char bit);
 		void setOutOff(char bit);
+		void allOff();
+		boolean bitStat(char bit);
 		uint8_t inputReg();
 };
 

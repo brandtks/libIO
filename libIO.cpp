@@ -29,14 +29,14 @@
  ******************************************************************************/
 int libIO::address = 0;
 uint8_t libIO::outReg = 0;
-boolean libIO::out[8];
+boolean libIO::out[8] = {false, false, false, false, false, false, false, false};
 
 /******************************************************************************
  * Constructors
  ******************************************************************************/
-libIO::libIO(int iniAddress)
+libIO::libIO(int initAddress)
 {
-	address = iniAddress;
+	address = initAddress;
 }
 
 /******************************************************************************
@@ -52,6 +52,12 @@ void libIO::init(char inOut)
 	{
 		Wire.beginTransmission(address);
 		Wire.send(0xFF);
+		Wire.endTransmission();
+	}
+	else
+	{
+		Wire.beginTransmission(address);
+		Wire.send(0x00);
 		Wire.endTransmission();
 	}
 }
@@ -181,6 +187,35 @@ void libIO::setOutOff(char bit)
 }
 
 /**********************************************************
+ *turn all outputs off
+ **********************************************************/
+uint8_t libIO::allOff()
+{
+	Wire.beginTransmission(address);
+	Wire.send(0x00);
+	Wire.endTransmission();
+}
+
+/**********************************************************
+ *check specific bit status
+ **********************************************************/
+boolean libIO::bitStat(char bit)
+{
+	uint8_t byte = inputReg();
+
+	byte >>= bit;
+	byte = byte & 0x01;
+	if (byte == 0x01)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/**********************************************************
  *read input register
  **********************************************************/
 uint8_t libIO::inputReg()
@@ -195,3 +230,4 @@ uint8_t libIO::inputReg()
 
 	return byte;
 }
+
