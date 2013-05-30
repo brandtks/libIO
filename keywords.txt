@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For Ultrasound
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+libIO	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+initOutput	KEYWORD2
+setOutOn	KEYWORD2
+setOutOff	KEYWORD2
+allOff	KEYWORD2
+allOn	KEYWORD2
+bitStat	KEYWORD2
+inputArray	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
