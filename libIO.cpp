@@ -49,21 +49,141 @@ libIO::libIO(int initAddress)
  ******************************************************************************/
 
 /**********************************************************
- *setup the device to use as an output (0) or input (1)
+ *setup the device to use as an output (1) or input (0)
  **********************************************************/
 void libIO::init(uint8_t inOut)
 {
 	//set up device to be used as an inputs
 	//must write highs to all the outputs to minimize current
-	if (inOut == 1)
+	if (inOut == INPUT)
 	{
 		allOn();
 	}
-	else if (inOut == 0)  //set up as output
+	else if (inOut == OUTPUT)  //set up as output
 	{
 		allOff();
 	}
 }
+
+/**********************************************************
+ *write either a low or high to a specfic bit
+ **********************************************************/
+void libIO::writeOut(uint8_t bit, uint8_t state)
+{
+	//write a low (0)
+	if (state == LOW)
+	{
+		setOutOff(bit);
+	}
+	//write a high (1)
+	else if (state == HIGH)
+	{
+		setOutOn(bit);
+	}
+}
+
+/**********************************************************
+ *turn all outputs off
+ **********************************************************/
+void libIO::allOff()
+{
+  outReg = 0x00;
+  setIO(outReg);
+  for (uint8_t i=0 ; i<8 ; i++)
+  {
+		out[i] = false;
+  }
+}
+
+/**********************************************************
+ *turn all outputs on
+ **********************************************************/
+void libIO::allOn()
+{
+  outReg = 0xFF;
+  setIO(outReg);
+  for (uint8_t i=0 ; i<8 ; i++)
+  {
+		out[i] = true;
+  }
+}
+
+/**********************************************************
+ *check specific bit status
+ **********************************************************/
+//gets input register from device
+uint8_t libIO::bitStat(uint8_t bit)
+{
+  uint8_t inByte = inputReg(); //get input register from device
+  inReg = inByte;  //save to class variable
+  inByte >>= bit;  //shift off bits
+  inByte = inByte & 0x01;  //determine if the first bit is a 1 or 0
+  if (inByte == 0x01)
+  {
+    return HIGH;
+  }
+  else
+  {
+    return LOW;
+  }
+}
+
+uint8_t libIO::bitStat(uint8_t bit, bool update)
+{
+  uint8_t byte = 0;
+
+  if (update)
+  {
+    byte = inputReg();  //get input register from device
+    inReg = byte;  //save to class variable
+  }
+  else
+  {
+    byte = inReg;  //used if already updated input register on that scan and want to check the status of another bit
+  }
+  byte >>= bit;  //shift off bits
+  byte = byte & 0x01;
+  if (byte == 0x01)
+  {
+    return HIGH;
+  }
+  else
+  {
+    return LOW;
+  }
+}
+
+/**********************************************************
+ *returns pointer to an array of booleans on the status of the input byte
+ **********************************************************/
+uint8_t* libIO::inputArray()
+{
+  uint8_t* in = new uint8_t[8];
+	uint8_t tempByte = 0;
+  
+	uint8_t byte = inputReg(); //get input register from device
+	inReg = byte;  //save input register to class variable
+
+  for (uint8_t i=0 ; i<8 ; i++)
+  {
+    tempByte = byte;
+    tempByte >>= i;
+    tempByte = tempByte & 0x01;
+    if (tempByte == 0x01)
+    {
+      in[i] = HIGH;
+    }
+		else
+		{
+			in[i] = LOW;
+		}
+  }
+  return in;
+}
+
+/******************************************************************************
+ *Private Functions
+ ******************************************************************************/
 
 /**********************************************************
  *turn single bit output on
@@ -208,107 +328,6 @@ void libIO::setOutOff(uint8_t bit)
   //send byte
   setIO(outReg);
 }
-
-/**********************************************************
- *turn all outputs off
- **********************************************************/
-void libIO::allOff()
-{
-  outReg = 0x00;
-  setIO(outReg);
-  for (uint8_t i=0 ; i<8 ; i++)
-  {
-		out[i] = false;
-  }
-}
-
-/**********************************************************
- *turn all outputs on
- **********************************************************/
-void libIO::allOn()
-{
-  outReg = 0xFF;
-  setIO(outReg);
-  for (uint8_t i=0 ; i<8 ; i++)
-  {
-		out[i] = true;
-  }
-}
-
-/**********************************************************
- *check specific bit status
- **********************************************************/
-//gets input register from device
-bool libIO::bitStat(uint8_t bit)
-{
-  uint8_t inByte = inputReg(); //get input register from device
-  inReg = inByte;  //save to class variable
-  inByte >>= bit;  //shift off bits
-  inByte = inByte & 0x01;
-  if (inByte == 0x01)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-bool libIO::bitStat(char bit, bool update)
-{
-  uint8_t byte = 0;
-
-  if (update)
-  {
-    byte = inputReg();  //get input register from device
-    inReg = byte;  //save to class variable
-  }
-  else
-  {
-    byte = inReg;  //used if already updated input register on that scan and want to check the status of another bit
-  }
-  byte >>= bit;  //shift off bits
-  byte = byte & 0x01;
-  if (byte == 0x01)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-/**********************************************************
- *returns pointer to an array of booleans on the status of the input byte
- *  use only if entire device is used for inputs
- **********************************************************/
-bool* libIO::inputArray()
-{
-  static bool in[8];
-  uint8_t byte = inputReg(); //get input register from device
-  uint8_t tempByte = 0;
-  for (uint8_t i=0 ; i<8 ; i++)
-  {
-    tempByte = byte;
-    tempByte >>= i;
-    tempByte = tempByte & 0x01;
-    if (tempByte == 0x01)
-    {
-      in[i] = true;
-    }
-		else
-		{
-			in[i] = false;
-		}
-  }
-  return in;
-}
-
-/******************************************************************************
- *Private Functions
- ******************************************************************************/
 
 /**********************************************************
  *send output Registers via I2C to device
