@@ -81,6 +81,6 @@ Returns a pointer to an array of uint8_t with HIGH or LOW of each of the inputs.
 3)
 May 29, 2013 - Initial Release
 June 15, 2013 - Functions now use uint8_t variable HIGH or LOW instead of true and false to more closely mimic the IO on the chipKit itself.
-		Fixed some major fails in the inputArray().
-		Using writeOut for outputs instead of seperate functions for turning an output on or off.
-		Updated the example for the new code.
+	Fixed some major fails in the inputArray().
+	Using writeOut for outputs instead of seperate functions for turning an output on or off.
+	Updated the example for the new code.
