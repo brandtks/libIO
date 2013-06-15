@@ -29,7 +29,7 @@
  ******************************************************************************/
 int libIO::address = 0;
 uint8_t libIO::outReg = 0;  //Register sent to device
-bool libIO::out[8] = {true, true, true, true, true, true, true, true};
+bool libIO::out[8];
 uint8_t libIO::inReg = 0;
 
 /******************************************************************************
@@ -37,7 +37,11 @@ uint8_t libIO::inReg = 0;
  ******************************************************************************/
 libIO::libIO(int initAddress)
 {
-  address = initAddress;
+  address = initAddress;  //address of the device
+	for (uint8_t i=0 ; i<8 ; i++)
+	{
+		out[i] = true;
+	}
 }
 
 /******************************************************************************
@@ -47,13 +51,15 @@ libIO::libIO(int initAddress)
 /**********************************************************
  *setup the device to use as an output (0) or input (1)
  **********************************************************/
-void libIO::init(char inOut)
+void libIO::init(uint8_t inOut)
 {
-    if (inOut == 1)
+	//set up device to be used as an inputs
+	//must write highs to all the outputs to minimize current
+	if (inOut == 1)
 	{
 		allOn();
 	}
-	else if (inOut == 0)
+	else if (inOut == 0)  //set up as output
 	{
 		allOff();
 	}
@@ -62,7 +68,7 @@ void libIO::init(char inOut)
 /**********************************************************
  *turn single bit output on
  **********************************************************/
-void libIO::setOutOn(char bit)
+void libIO::setOutOn(uint8_t bit)
 {
   //add binary bit to byte being sent
   switch(bit)
@@ -134,7 +140,7 @@ void libIO::setOutOn(char bit)
 /**********************************************************
  *turn single bit output off
  **********************************************************/
-void libIO::setOutOff(char bit)
+void libIO::setOutOff(uint8_t bit)
 {
   //subtract binary bit from byte being sent
   switch(bit)
@@ -210,9 +216,9 @@ void libIO::allOff()
 {
   outReg = 0x00;
   setIO(outReg);
-  for (char i=0 ; i<8 ; i++)
+  for (uint8_t i=0 ; i<8 ; i++)
   {
-      out[i] = false;
+		out[i] = false;
   }
 }
 
@@ -223,16 +229,17 @@ void libIO::allOn()
 {
   outReg = 0xFF;
   setIO(outReg);
-  for (char i=0 ; i<8 ; i++)
+  for (uint8_t i=0 ; i<8 ; i++)
   {
-      out[i] = true;
+		out[i] = true;
   }
 }
 
 /**********************************************************
  *check specific bit status
  **********************************************************/
-bool libIO::bitStat(char bit)
+//gets input register from device
+bool libIO::bitStat(uint8_t bit)
 {
   uint8_t inByte = inputReg(); //get input register from device
   inReg = inByte;  //save to class variable
@@ -279,18 +286,22 @@ bool libIO::bitStat(char bit, bool update)
  **********************************************************/
 bool* libIO::inputArray()
 {
-  static bool in[] = {false, false, false, false, false, false, false, false};
+  static bool in[8];
   uint8_t byte = inputReg(); //get input register from device
   uint8_t tempByte = 0;
-  for (char i=0 ; i<0 ; i++)
+  for (uint8_t i=0 ; i<8 ; i++)
   {
     tempByte = byte;
     tempByte >>= i;
-    tempByte = byte & 0x01;
+    tempByte = tempByte & 0x01;
     if (tempByte == 0x01)
     {
       in[i] = true;
     }
+		else
+		{
+			in[i] = false;
+		}
   }
   return in;
 }

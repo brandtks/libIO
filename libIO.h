@@ -29,20 +29,20 @@ class libIO
 private:
   static int address;
   static uint8_t outReg;
-  static bool out[];
+  static bool out[8];
   static uint8_t inReg;
   static void setIO(uint8_t outputReg);
   static uint8_t inputReg();
 
 public:
   libIO(int initAddress);
-  void init(char inOut);
-  void setOutOn(char bit);
-  void setOutOff(char bit);
+  void init(uint8_t inOut);
+  void setOutOn(uint8_t bit);
+  void setOutOff(uint8_t bit);
   void allOff();
   void allOn();
-  bool bitStat(char bit);
-  bool bitStat(char bit, bool update);
+  bool bitStat(uint8_t bit);
+  bool bitStat(uint8_t bit, bool update);
   bool* inputArray();
 };
 
