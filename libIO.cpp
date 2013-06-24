@@ -109,6 +109,15 @@ void libIO::allOn()
 }
 
 /**********************************************************
+ *get the saved bool status of the output
+ **********************************************************/
+bool libIO::getWrittenOutStatus(uint8_t bit)
+{
+	bool status = out[bit];
+	return status;
+}
+
+/**********************************************************
  *check specific bit status
  **********************************************************/
 //gets input register from device

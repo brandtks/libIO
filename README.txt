@@ -51,6 +51,11 @@ Returns VOID.
 **Example**
 	example.allOn();
 
+____getWrittenOutStatus(uint8_t bit):
+Returns a TRUE or FALSE saved boolean status of the output. True is HIGH, false is LOW.
+**Example**
+	bool is5On = example.getWrittenOutStatus(5);
+
 ____bitStat(uint8_t bit):
 Receives the input register from the device and then shifts off the number of bits to get to the bit corresponding to the pin desired.
 Then determines if bit is a 1 or 0 and Returns HIGH or LOW.

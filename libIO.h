@@ -48,6 +48,7 @@ public:
 	void writeOut(uint8_t bit, uint8_t state);
   void allOff();
   void allOn();
+	bool getWrittenOutStatus(uint8_t bit);
   uint8_t bitStat(uint8_t bit);
   uint8_t bitStat(uint8_t bit, bool update);
   uint8_t* inputArray();
