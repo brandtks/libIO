@@ -33,11 +33,12 @@
 class libIO
 {
 private:
-  static int address;
-  static uint8_t outReg;
-  static bool out[8];
-  static uint8_t inReg;
-  void setOutOn(uint8_t bit);
+  int address;
+  uint8_t outReg;
+  bool out[8];
+  uint8_t inReg;
+  
+	void setOutOn(uint8_t bit);
   void setOutOff(uint8_t bit);  
 	void setIO(uint8_t outputReg);
   uint8_t inputReg();
