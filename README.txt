@@ -72,7 +72,7 @@ Used to minimize I2C comms
 ____inputArray();
 Returns a pointer to an array of uint8_t with HIGH or LOW of each of the inputs.
 **Example for input P5 and P6**
-	bool* in = example.inputArray();
+	uint8_t* in = example.inputArray();
 	if (in[5] == HIGH)
 	{
 		*do some stuff*
