@@ -33,26 +33,28 @@
 class libIO
 {
 private:
-  int address;
-  uint8_t outReg;
-  bool out[8];
-  uint8_t inReg;
-  
+	int address;
+	uint8_t outReg;
+	bool out[8];
+	uint8_t inReg;
+	
+	void initiate(int initAddress);
 	void setOutOn(uint8_t bit);
-  void setOutOff(uint8_t bit);  
+	void setOutOff(uint8_t bit);  
 	void setIO(uint8_t outputReg);
-  uint8_t inputReg();
+	uint8_t inputReg();
 
 public:
-  libIO(int initAddress);
-  void init(uint8_t inOut);
+	libIO(int initAddress);
+	libIO();
+	void init(uint8_t inOut);
 	void writeOut(uint8_t bit, uint8_t state);
-  void allOff();
-  void allOn();
+	void allOff();
+	void allOn();
 	bool getWrittenOutStatus(uint8_t bit);
-  uint8_t bitStat(uint8_t bit);
-  uint8_t bitStat(uint8_t bit, bool update);
-  uint8_t* inputArray();
+	uint8_t bitStat(uint8_t bit);
+	uint8_t bitStat(uint8_t bit, bool update);
+	uint8_t* inputArray();
 };
 
 #endif
