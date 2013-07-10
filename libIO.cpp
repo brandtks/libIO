@@ -4,19 +4,19 @@
 
   Created by Skyler Brandt on May 2013 for chipKit.
 
-  Copyright 2013 Skyler Brandt
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+	Copyright 2013 Skyler Brandt
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/
 */
 
 #include <inttypes.h>
@@ -44,10 +44,10 @@ libIO::libIO()
 /**********************************************************
  *set instance device address
  **********************************************************/ 
- void libDAC::setAddress(int initAddress)
- {
-	address = initAddress;
- }
+void libIO::setAddress(int initAddress)
+{
+	this->address = initAddress;
+}
  
 /**********************************************************
  *setup the device to use as an output (1) or input (0)
@@ -92,7 +92,7 @@ void libIO::allOff()
 	setIO(outReg);
 	for (uint8_t i=0 ; i<8 ; i++)
 	{
-		out[i] = false;
+		this->out[i] = false;
 	}
 }
 
@@ -105,7 +105,7 @@ void libIO::allOn()
 	setIO(outReg);
 	for (uint8_t i=0 ; i<8 ; i++)
 	{
-		out[i] = true;
+		this->out[i] = true;
 	}
 }
 
@@ -114,8 +114,7 @@ void libIO::allOn()
  **********************************************************/
 bool libIO::getWrittenOutStatus(uint8_t bit)
 {
-	bool status = out[bit];
-	return status;
+	return this->out[bit];
 }
 
 /**********************************************************
@@ -125,7 +124,7 @@ bool libIO::getWrittenOutStatus(uint8_t bit)
 uint8_t libIO::bitStat(uint8_t bit)
 {
 	uint8_t inByte = inputReg(); //get input register from device
-	inReg = inByte;  //save to class variable
+	this->inReg = inByte;  //save to class variable
 	inByte >>= bit;  //shift off bits
 	inByte = inByte & 0x01;  //determine if the first bit is a 1 or 0
 	if (inByte == 0x01)
@@ -145,11 +144,11 @@ uint8_t libIO::bitStat(uint8_t bit, bool update)
 	if (update)
 	{
 		byte = inputReg();  //get input register from device
-		inReg = byte;  //save to class variable
+		this->inReg = byte;  //save to class variable
 	}
 	else
 	{
-		byte = inReg;  //used if already updated input register on that scan and want to check the status of another bit
+		byte = this->inReg;  //used if already updated input register on that scan and want to check the status of another bit
 	}
 	byte >>= bit;  //shift off bits
 	byte = byte & 0x01;
@@ -172,7 +171,7 @@ uint8_t* libIO::inputArray()
 	uint8_t tempByte = 0;
   
 	uint8_t byte = inputReg(); //get input register from device
-	inReg = byte;  //save input register to class variable
+	this->inReg = byte;  //save input register to class variable
 
 	for (uint8_t i=0 ; i<8 ; i++)
 	{
@@ -200,10 +199,10 @@ uint8_t* libIO::inputArray()
  **********************************************************/
 void libIO::initiate(int initAddress)
 {
-	address = initAddress;  //address of the device
+	this->address = initAddress;  //address of the device
 	for (uint8_t i=0 ; i<8 ; i++)
 	{
-		out[i] = true;
+		this->out[i] = true;
 	}
 }
  
@@ -213,70 +212,78 @@ void libIO::initiate(int initAddress)
 void libIO::setOutOn(uint8_t bit)
 {
 	//add binary bit to byte being sent
+	if (!this->out[bit])
+	{
+		this->outReg += powerTwo(bit);
+		this->out[bit] = true;
+	}
+	
+	/*
 	switch(bit)
 	{
 	case 0:
-		if (!out[0])
+		if (!this->out[0])
 		{
-			outReg += 1;
-			out[0] = true;
+			this->outReg += 1;
+			this->out[0] = true;
 		}
 		break;
 	case 1:
-		if (!out[1])
+		if (!this->out[1])
 		{
-			outReg += 2;
-			out[1] = true;
+			this->outReg += 2;
+			this->out[1] = true;
 		}
 		break;
 	case 2:
-		if (!out[2])
+		if (!this->out[2])
 		{
-			outReg += 4;
-			out[2] = true;
+			this->outReg += 4;
+			this->out[2] = true;
 		}
 		break;
 	case 3:
-		if (!out[3])
+		if (!this->out[3])
 		{
-			outReg += 8;
-			out[3] = true;
+			this->outReg += 8;
+			this->out[3] = true;
 		}
 		break;
 	case 4:
-		if (!out[4])
+		if (!this->out[4])
 		{
-			outReg += 16;
-			out[4] = true;
+			this->outReg += 16;
+			this->out[4] = true;
 		}
 		break;
 	case 5:
-		if (!out[5])
+		if (!this->out[5])
 		{
-			outReg += 32;
-			out[5] = true;
+			this->outReg += 32;
+			this->out[5] = true;
 		}
 		break;
 	case 6:
-		if (!out[6])
+		if (!this->out[6])
 		{
-			outReg += 64;
-		out[6] = true;
+			this->outReg += 64;
+			this->out[6] = true;
 		}
 		break;
 	case 7:
-		if (!out[7])
+		if (!this->out[7])
 		{
-			outReg += 128;
-			out[7] = true;
+			this->outReg += 128;
+			this->out[7] = true;
 		}
 		break;
 	default:
 		break;
 	}
-
+	*/
+	
 	//send byte
-	setIO(outReg);
+	setIO(this->outReg);
 }
 
 /**********************************************************
@@ -285,70 +292,78 @@ void libIO::setOutOn(uint8_t bit)
 void libIO::setOutOff(uint8_t bit)
 {
 	//subtract binary bit from byte being sent
+	if (this->out[bit])
+	{
+		this->outReg -= powerTwo(bit);
+		this->out[bit] = false;
+	}
+
+	/*
 	switch(bit)
 	{
 	case 0:
-		if (out[0])
+		if (this->out[0])
 		{
-			outReg -= 1;
-			out[0] = false;
+			this->outReg -= 1;
+			this->out[0] = false;
 		}
 		break;
 	case 1:
-		if (out[1])
+		if (this->out[1])
 		{
-			outReg -= 2;
-			out[1] = false;
+			this->outReg -= 2;
+			this->out[1] = false;
 		}
 		break;
 	case 2:
-		if (out[2])
+		if (this->out[2])
 		{
-			outReg -= 4;
-			out[2] = false;
+			this->outReg -= 4;
+			this->out[2] = false;
 		}
 		break;
 	case 3:
-		if (out[3])
+		if (this->out[3])
 		{
-			outReg -= 8;
-			out[3] = false;
+			this->outReg -= 8;
+			this->out[3] = false;
 		}
 		break;
 	case 4:
-		if (out[4])
+		if (this->out[4])
 		{
-			outReg -= 16;
-			out[4] = false;
+			this->outReg -= 16;
+			this->out[4] = false;
 		}
 		break;
 	case 5:
-		if (out[5])
+		if (this->out[5])
 		{
-			outReg -= 32;
-			out[5] = false;
+			this->outReg -= 32;
+			this->out[5] = false;
 		}
 		break;
 	case 6:
-		if (out[6])
+		if (this->out[6])
 		{
-			outReg -= 64;
-			out[6] = false;
+			this->outReg -= 64;
+			this->out[6] = false;
 		}
 		break;
 	case 7:
-		if (out[7])
+		if (this->out[7])
 		{
-			outReg -= 128;
-			out[7] = false;
+			this->outReg -= 128;
+			this->out[7] = false;
 		}
 		break;
 	default:
 		break;
 	}
+	*/
 
 	//send byte
-	setIO(outReg);
+	setIO(this->outReg);
 }
 
 /**********************************************************
@@ -357,7 +372,7 @@ void libIO::setOutOff(uint8_t bit)
 void libIO::setIO(uint8_t outputReg)
 {
 	uint8_t sendByte[2] = {0, outputReg};
-	Wire.beginTransmission(address);
+	Wire.beginTransmission(this->address);
 	Wire.send(sendByte, 2);
 	Wire.endTransmission();
 }
@@ -368,7 +383,7 @@ void libIO::setIO(uint8_t outputReg)
 uint8_t libIO::inputReg()
 {
 	uint8_t registerByte = 0;
-	Wire.requestFrom(address,2);
+	Wire.requestFrom(this->address,2);
 	while(Wire.available())
 	{
 		registerByte = Wire.receive();
@@ -376,4 +391,12 @@ uint8_t libIO::inputReg()
 	}
 
 	return registerByte;
+}
+
+/**********************************************************
+ *Power of Two Calculation
+ **********************************************************/
+uint8_t libIO::powerTwo(double n)
+{
+	return pow(2, n);
 }

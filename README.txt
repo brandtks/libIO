@@ -89,3 +89,4 @@ June 15, 2013 - Functions now use uint8_t variable HIGH or LOW instead of true a
 	Fixed some major fails in the inputArray().
 	Using writeOut for outputs instead of seperate functions for turning an output on or off.
 	Updated the example for the new code.
+July 10, 2013 - Fixed individually addressed instances of the class
