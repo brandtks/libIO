@@ -35,12 +35,10 @@ class libIO
 private:
 	int address;
 	uint8_t outReg;
-	bool out[8];
-	uint8_t inReg;
 	
 	void initiate(int initAddress);
-	void setOutOn(uint8_t bit);
-	void setOutOff(uint8_t bit);  
+	void setOutOn(uint8_t tBit);
+	void setOutOff(uint8_t tBit);  
 	void setIO(uint8_t outputReg);
 	uint8_t inputReg();
 	uint8_t powerTwo(double n);
@@ -50,12 +48,13 @@ public:
 	libIO();
 	void setAddress(int initAddress);
 	void init(uint8_t inOut);
-	void writeOut(uint8_t bit, uint8_t state);
+	void writeOut(uint8_t tBit, uint8_t state);
 	void allOff();
 	void allOn();
-	bool getWrittenOutStatus(uint8_t bit);
-	uint8_t bitStat(uint8_t bit);
-	uint8_t bitStat(uint8_t bit, bool update);
+	void outputMaskOn(uint8_t outputMask);
+	void outputMaskOff(uint8_t outputMask);
+	uint8_t bitStat(uint8_t tBit);
+	uint8_t bitStat(uint8_t tBit, bool update);
 	uint8_t* inputArray();
 };
 

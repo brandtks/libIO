@@ -64,22 +64,31 @@ void libIO::init(uint8_t inOut)
 	{
 		allOff();
 	}
+	else
+	{
+		return;
+	}
 }
 
 /**********************************************************
  *write either a low or high to a specfic bit
  **********************************************************/
-void libIO::writeOut(uint8_t bit, uint8_t state)
+void libIO::writeOut(uint8_t tBit, uint8_t state)
 {
 	//write a low (0)
 	if (state == LOW)
 	{
-		setOutOff(bit);
+		setOutOff(tBit);
 	}
+	
 	//write a high (1)
 	else if (state == HIGH)
 	{
-		setOutOn(bit);
+		setOutOn(tBit);
+	}
+	else
+	{
+		return;
 	}
 }
 
@@ -88,12 +97,8 @@ void libIO::writeOut(uint8_t bit, uint8_t state)
  **********************************************************/
 void libIO::allOff()
 {
-	outReg = 0x00;
-	setIO(outReg);
-	for (uint8_t i=0 ; i<8 ; i++)
-	{
-		this->out[i] = false;
-	}
+	this->outReg = 0x00;
+	setIO(this->outReg);
 }
 
 /**********************************************************
@@ -101,58 +106,39 @@ void libIO::allOff()
  **********************************************************/
 void libIO::allOn()
 {
-	outReg = 0xFF;
-	setIO(outReg);
-	for (uint8_t i=0 ; i<8 ; i++)
-	{
-		this->out[i] = true;
-	}
+	this->outReg = 0xFF;
+	setIO(this->outReg);
 }
 
 /**********************************************************
- *get the saved bool status of the output
+ *
  **********************************************************/
-bool libIO::getWrittenOutStatus(uint8_t bit)
+void libIO::outputMaskOn(uint8_t outputMask)
 {
-	return this->out[bit];
+	this->outReg |= outputMask;
+	setIO(this->outReg);
 }
+
+/**********************************************************
+ *
+ **********************************************************/
+void libIO::outputMaskOff(uint8_t outputMask)
+{
+	this->outReg &= ~outputMask;
+	setIO(this->outReg);
+}
+
 
 /**********************************************************
  *check specific bit status
  **********************************************************/
-//gets input register from device
-uint8_t libIO::bitStat(uint8_t bit)
+uint8_t libIO::bitStat(uint8_t tBit)
 {
-	uint8_t inByte = inputReg(); //get input register from device
-	this->inReg = inByte;  //save to class variable
-	inByte >>= bit;  //shift off bits
-	inByte = inByte & 0x01;  //determine if the first bit is a 1 or 0
-	if (inByte == 0x01)
-	{
-		return HIGH;
-	}
-	else
-	{
-		return LOW;
-	}
-}
+	uint8_t tByte = inputReg(); //get input register from device
 
-uint8_t libIO::bitStat(uint8_t bit, bool update)
-{
-	uint8_t byte = 0;
-
-	if (update)
-	{
-		byte = inputReg();  //get input register from device
-		this->inReg = byte;  //save to class variable
-	}
-	else
-	{
-		byte = this->inReg;  //used if already updated input register on that scan and want to check the status of another bit
-	}
-	byte >>= bit;  //shift off bits
-	byte = byte & 0x01;
-	if (byte == 0x01)
+	tByte >>= tBit;  //shift off bits
+	tByte &= 0x01;  //determine if the first bit is a 1 or 0
+	if (tByte == 0x01)
 	{
 		return HIGH;
 	}
@@ -163,21 +149,20 @@ uint8_t libIO::bitStat(uint8_t bit, bool update)
 }
 
 /**********************************************************
- *returns pointer to an array of booleans on the status of the input byte
+ *returns pointer to an array of HIGH/LOW on the status of the input register
  **********************************************************/
 uint8_t* libIO::inputArray()
 {
 	uint8_t* in = new uint8_t[8];
 	uint8_t tempByte = 0;
   
-	uint8_t byte = inputReg(); //get input register from device
-	this->inReg = byte;  //save input register to class variable
+	uint8_t tByte = inputReg(); //get input register from device
 
 	for (uint8_t i=0 ; i<8 ; i++)
 	{
-		tempByte = byte;
+		tempByte = tByte;
 		tempByte >>= i;
-		tempByte = tempByte & 0x01;
+		tempByte &= 0x01;
 		if (tempByte == 0x01)
 		{
 			in[i] = HIGH;
@@ -200,178 +185,35 @@ uint8_t* libIO::inputArray()
 void libIO::initiate(int initAddress)
 {
 	this->address = initAddress;  //address of the device
-	for (uint8_t i=0 ; i<8 ; i++)
-	{
-		this->out[i] = true;
-	}
+	this->outReg = 0xFF;
 }
- 
+
 /**********************************************************
  *turn single bit output on
  **********************************************************/
-void libIO::setOutOn(uint8_t bit)
+void libIO::setOutOn(uint8_t tBit)
 {
-	//add binary bit to byte being sent
-	if (!this->out[bit])
-	{
-		this->outReg += powerTwo(bit);
-		this->out[bit] = true;
-	}
-	
-	/*
-	switch(bit)
-	{
-	case 0:
-		if (!this->out[0])
-		{
-			this->outReg += 1;
-			this->out[0] = true;
-		}
-		break;
-	case 1:
-		if (!this->out[1])
-		{
-			this->outReg += 2;
-			this->out[1] = true;
-		}
-		break;
-	case 2:
-		if (!this->out[2])
-		{
-			this->outReg += 4;
-			this->out[2] = true;
-		}
-		break;
-	case 3:
-		if (!this->out[3])
-		{
-			this->outReg += 8;
-			this->out[3] = true;
-		}
-		break;
-	case 4:
-		if (!this->out[4])
-		{
-			this->outReg += 16;
-			this->out[4] = true;
-		}
-		break;
-	case 5:
-		if (!this->out[5])
-		{
-			this->outReg += 32;
-			this->out[5] = true;
-		}
-		break;
-	case 6:
-		if (!this->out[6])
-		{
-			this->outReg += 64;
-			this->out[6] = true;
-		}
-		break;
-	case 7:
-		if (!this->out[7])
-		{
-			this->outReg += 128;
-			this->out[7] = true;
-		}
-		break;
-	default:
-		break;
-	}
-	*/
-	
-	//send byte
+	uint8_t tByte = powerTwo(tBit);  //convert integer to BCD
+	this->outReg |= tByte;
 	setIO(this->outReg);
 }
 
 /**********************************************************
  *turn single bit output off
  **********************************************************/
-void libIO::setOutOff(uint8_t bit)
+void libIO::setOutOff(uint8_t tBit)
 {
-	//subtract binary bit from byte being sent
-	if (this->out[bit])
-	{
-		this->outReg -= powerTwo(bit);
-		this->out[bit] = false;
-	}
-
-	/*
-	switch(bit)
-	{
-	case 0:
-		if (this->out[0])
-		{
-			this->outReg -= 1;
-			this->out[0] = false;
-		}
-		break;
-	case 1:
-		if (this->out[1])
-		{
-			this->outReg -= 2;
-			this->out[1] = false;
-		}
-		break;
-	case 2:
-		if (this->out[2])
-		{
-			this->outReg -= 4;
-			this->out[2] = false;
-		}
-		break;
-	case 3:
-		if (this->out[3])
-		{
-			this->outReg -= 8;
-			this->out[3] = false;
-		}
-		break;
-	case 4:
-		if (this->out[4])
-		{
-			this->outReg -= 16;
-			this->out[4] = false;
-		}
-		break;
-	case 5:
-		if (this->out[5])
-		{
-			this->outReg -= 32;
-			this->out[5] = false;
-		}
-		break;
-	case 6:
-		if (this->out[6])
-		{
-			this->outReg -= 64;
-			this->out[6] = false;
-		}
-		break;
-	case 7:
-		if (this->out[7])
-		{
-			this->outReg -= 128;
-			this->out[7] = false;
-		}
-		break;
-	default:
-		break;
-	}
-	*/
-
-	//send byte
-	setIO(this->outReg);
+	uint_t tByte = powerTwo(tBit); //convert integer to BCD
+	this->outReg &= ~tByte;
+	setIO(this->outReg);  //send output register
 }
 
 /**********************************************************
  *send output Registers via I2C to device
  **********************************************************/
-void libIO::setIO(uint8_t outputReg)
+void libIO::setIO(uint8_t outputRegister)
 {
-	uint8_t sendByte[2] = {0, outputReg};
+	uint8_t sendByte[2] = {0, outputRegister};
 	Wire.beginTransmission(this->address);
 	Wire.send(sendByte, 2);
 	Wire.endTransmission();
