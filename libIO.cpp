@@ -1,8 +1,8 @@
 /*
-  libIO - An I2C Extended IO Library for chipKit.
-  Texas Instrurments PCF8574 over I2C serial communications.
+	libIO - An I2C Extended IO Library for chipKit.
+	Texas Instrurments PCF8574 over I2C serial communications.
 
-  Created by Skyler Brandt on May 2013 for chipKit.
+	Created by Skyler Brandt on May 2013 for chipKit.
 
 	Copyright 2013 Skyler Brandt
 	This program is free software: you can redistribute it and/or modify
