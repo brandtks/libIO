@@ -193,7 +193,7 @@ void libIO::initiate(int initAddress)
  **********************************************************/
 void libIO::setOutOn(uint8_t tBit)
 {
-	uint8_t tByte = powerTwo(tBit);  //convert integer to BCD
+	uint8_t tByte = powerTwo(tBit);  //convert integer to bit mask
 	this->outReg |= tByte;
 	setIO(this->outReg);
 }
@@ -203,7 +203,7 @@ void libIO::setOutOn(uint8_t tBit)
  **********************************************************/
 void libIO::setOutOff(uint8_t tBit)
 {
-	uint_t tByte = powerTwo(tBit); //convert integer to BCD
+	uint_t tByte = powerTwo(tBit); //convert integer to bit mask
 	this->outReg &= ~tByte;
 	setIO(this->outReg);  //send output register
 }
