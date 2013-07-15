@@ -29,26 +29,14 @@
  ******************************************************************************/
 libIO::libIO(int initAddress)
 {
-	initiate(initAddress);
-}
-
-libIO::libIO()
-{
-	initiate(-1);
+	this->address = initAddress;  //address of the device
+	this->outReg = 0xFF;
 }
 
 /******************************************************************************
  * Global Functions
  ******************************************************************************/
 
-/**********************************************************
- *set instance device address
- **********************************************************/ 
-void libIO::setAddress(int initAddress)
-{
-	this->address = initAddress;
-}
- 
 /**********************************************************
  *setup the device to use as an output (1) or input (0)
  **********************************************************/
@@ -111,7 +99,7 @@ void libIO::allOn()
 }
 
 /**********************************************************
- *
+ *Turns on outputs corresponding to the bit mask
  **********************************************************/
 void libIO::outputMaskOn(uint8_t outputMask)
 {
@@ -120,7 +108,7 @@ void libIO::outputMaskOn(uint8_t outputMask)
 }
 
 /**********************************************************
- *
+ *Turns off outputs corresponding to the bit mask
  **********************************************************/
 void libIO::outputMaskOff(uint8_t outputMask)
 {
@@ -178,15 +166,6 @@ uint8_t* libIO::inputArray()
 /******************************************************************************
  *Private Functions
  ******************************************************************************/
-
- /**********************************************************
- *initiate
- **********************************************************/
-void libIO::initiate(int initAddress)
-{
-	this->address = initAddress;  //address of the device
-	this->outReg = 0xFF;
-}
 
 /**********************************************************
  *turn single bit output on

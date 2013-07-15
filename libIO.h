@@ -36,7 +36,6 @@ private:
 	int address;
 	uint8_t outReg;
 	
-	void initiate(int initAddress);
 	void setOutOn(uint8_t tBit);
 	void setOutOff(uint8_t tBit);  
 	void setIO(uint8_t outputReg);
@@ -45,8 +44,6 @@ private:
 
 public:
 	libIO(int initAddress);
-	libIO();
-	void setAddress(int initAddress);
 	void init(uint8_t inOut);
 	void writeOut(uint8_t tBit, uint8_t state);
 	void allOff();
@@ -54,7 +51,6 @@ public:
 	void outputMaskOn(uint8_t outputMask);
 	void outputMaskOff(uint8_t outputMask);
 	uint8_t bitStat(uint8_t tBit);
-	uint8_t bitStat(uint8_t tBit, bool update);
 	uint8_t* inputArray();
 };
 
