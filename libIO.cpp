@@ -21,6 +21,7 @@
 
 #include <inttypes.h>
 #include <WProgram.h>
+#include <math.h>
 #include <Wire.h>
 #include <libIO.h>
 
