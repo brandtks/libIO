@@ -23,6 +23,9 @@
 #define LIB_IO_H
 
 #include <inttypes.h>
+#include <WProgram.h>
+#include <math.h>
+#include <Wire.h>
 
 #define HIGH 1
 #define LOW 0
@@ -32,16 +35,6 @@
 
 class libIO
 {
-private:
-	int address;
-	uint8_t outReg;
-	
-	void setOutOn(uint8_t tBit);
-	void setOutOff(uint8_t tBit);  
-	void setIO(uint8_t outputReg);
-	uint8_t inputReg();
-	uint8_t powerTwo(double n);
-
 public:
 	libIO(int initAddress);
 	void init(uint8_t inOut);
@@ -52,6 +45,17 @@ public:
 	void outputMaskOff(uint8_t outputMask);
 	uint8_t bitStat(uint8_t tBit);
 	uint8_t* inputArray();
+	
+private:
+	int address;
+	uint8_t outReg;
+	
+	void setOutOn(uint8_t tBit);
+	void setOutOff(uint8_t tBit);  
+	void setIO(uint8_t outputReg);
+	uint8_t inputReg();
+	uint8_t powerTwo(double n);
+	
 };
 
 #endif
