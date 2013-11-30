@@ -205,7 +205,6 @@ uint8_t libIO::inputReg()
 	while(Wire.available())
 	{
 		registerByte = Wire.receive();
-		registerByte = Wire.receive();
 	}
 
 	return registerByte;
