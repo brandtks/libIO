@@ -138,7 +138,7 @@ uint8_t libIO::bitStat(uint8_t tBit)
  **********************************************************/
 uint8_t* libIO::inputArray()
 {
-	uint8_t* in = new uint8_t[8];
+	static uint8_t in[8];
 	uint8_t tempByte = 0;
   
 	uint8_t tByte = inputReg(); //get input register from device
